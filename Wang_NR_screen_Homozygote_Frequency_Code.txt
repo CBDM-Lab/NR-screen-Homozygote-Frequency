@@ -1,0 +1,15 @@
+#Compute proportion of homozygous KO from independent frequencies or CRISPR scars at 3 different target sites of the same gene
+#where one mutation on both chromosomes is sufficient for a functional
+#There has to be a mathematically elegant solution, but when in doubt simulate
+#ugly loop through a table of inactivation frequencies, three columns containing percentages of inactivation at each locus, genes in rows
+#returns a vector (length = nrow input table) of frequencies of complete knockouts
+dat<-Bscars/100
+homKO<-rep(0, nrow(dat))
+k<-10000
+for (i in 1:nrow(dat)) {x<-matrix (0, k, 2)	#where the two columns of x represent the two chromosomes
+for (j in 1:3) {y<-dat[i,j]
+	x[,1]<-x[,1]+ sample(0:1, size=k, prob=c(1-y,y))
+	x[,2]<-x[,2]+ sample(0:1, size=k, prob=c(1-y,y)) }
+	homKO[i]<-sum(rowSums(x>0)==2)/k }
+	homKO<-homKO*100
+	homKO<-round(homKO, digits=2)
